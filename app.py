@@ -56,7 +56,7 @@ def create_item(name: str):
         int: The status code of the response
     """
     request_data = request.get_json()  # Grabs the incoming JSON from the request
-    
+
     for store in stores:
         if store["name"] == name:
             new_item = {
@@ -64,7 +64,25 @@ def create_item(name: str):
                 "price": request_data["price"]
             }
             store["items"].append(new_item)
-            
+
             return new_item, 201
-        
+
+    return { "message": "Store not Found" }, 404
+
+
+@app.get("/store/<string:name>/items")
+def get_item(name: str):
+    """_summary_
+    Performs GET request to retrieve all of the items from a specific store
+    Args:
+        name (str): The name of the store to retrieve specific items from
+    Returns:
+        dict: Response message/data
+        int: The status code of the response
+    """
+
+    for store in stores:
+        if store["name"] == name:
+            return { "items": store["items"] }, 201
+
     return { "message": "Store not Found" }, 404
