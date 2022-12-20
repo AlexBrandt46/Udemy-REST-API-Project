@@ -27,6 +27,7 @@ def get_stores() -> dict:
     """
     return { "stores": stores }
 
+
 @app.post("/store")  # http://127.0.0.1:5000/store
 def create_store() -> tuple:
     """_summary_
@@ -42,3 +43,28 @@ def create_store() -> tuple:
     }
     stores.append(new_store)
     return new_store, 201
+
+
+@app.post("/store/<string:name>/item")
+def create_item(name: str):
+    """
+    Performs POST request to add an item using the store name in the URL
+    Args:
+        name (str): The name of the store, we want to add an item to
+    Returns:
+        dict: Response message
+        int: The status code of the response
+    """
+    request_data = request.get_json()  # Grabs the incoming JSON from the request
+    
+    for store in stores:
+        if store["name"] == name:
+            new_item = {
+                "name": request_data["name"],
+                "price": request_data["price"]
+            }
+            store["items"].append(new_item)
+            
+            return new_item, 201
+        
+    return { "message": "Store not Found" }, 404
