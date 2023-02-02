@@ -28,6 +28,14 @@ def create_store() -> tuple:
         int: The status code of the response
     """
     store_data = request.get_json()
+    
+    if "name" not in store_data:
+        abort(400, message="Bad request. Ensure 'name' is included in the JSON payload.")
+        
+    for store in stores.values():
+        if store_data["name"] == store["name"]:
+            abort(400, message="Store already exists.")
+    
     store_id = uuid.uuid4().hex
     store = { **store_data, "id": store_id }  # ** unpacks data in store_data and stores each key-value pair
     stores[store_id] = store
@@ -42,16 +50,28 @@ def get_store(store_id) -> tuple:
         abort(404, message="Store not found")
 
 @app.post("/item")
-def create_item(name: str):
+def create_item():
     """
     Performs POST request to add an item using the store name in the URL
-    Args:
-        name (str): The name of the store, we want to add an item to
     Returns:
         dict: Response message
         int: The status code of the response
     """
     item_data = request.get_json()  # Grabs the incoming JSON from the request
+
+    if (
+        "price" not in item_data or
+        "store_id" not in item_data or
+        "name" not in item_data
+    ):
+        abort(400, message="Bad request. Ensure 'price', 'store_id', and 'name' are included in the JSON payload.")
+
+    for item in items.values():
+        if (
+            item_data["name"] == item["name"] and
+            item_data["store_id"] == item["store_id"]
+        ):
+            abort(400, message="Item already exists.")
 
     if item_data["store_id"] not in stores:
         abort(404, message="Store not found")
