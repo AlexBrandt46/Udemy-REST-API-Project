@@ -5,6 +5,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import stores
+from schemas import StoreSchema
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
@@ -16,7 +17,7 @@ class Store(MethodView):
         MethodView: _description_
     """
 
-
+    @blp.response(200, StoreSchema)
     def get(self, store_id: str) -> tuple:
         """ GET request handler for the /store/store_id endpoint
 
@@ -79,27 +80,25 @@ class StoreList(MethodView):
         MethodView (_type_): _description_
     """
 
-
+    @blp.response(200, StoreSchema(many=True))
     def get(self):
         """Performs GET request to retrieve all stores
         
         Returns:
             dict: A dictionary containing a list of all stores
         """
-        return { "stores": list(stores.values()) }
+        return stores.values()
 
 
-    def post(self):
+    @blp.arguments(StoreSchema)
+    @blp.response(200, StoreSchema)
+    def post(self, store_data):
         """Performs POST request to create a new store
         
         Returns:
             dict: The store that was created as part of this request
             int: The status code of the response
         """
-        store_data = request.get_json()
-
-        if "name" not in store_data:
-            abort(400, message="Bad request. Ensure 'name' is included in the JSON payload.")
 
         for store in stores.values():
             if store_data["name"] == store["name"]:
@@ -110,4 +109,4 @@ class StoreList(MethodView):
         store = { **store_data, "id": store_id }
         stores[store_id] = store
 
-        return store, 201
+        return store

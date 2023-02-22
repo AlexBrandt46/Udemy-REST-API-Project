@@ -1,4 +1,5 @@
 """ Contains objects used to simulate database """
 
-stores = {}
-items = {}
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
