@@ -28,10 +28,8 @@ class Store(MethodView):
         Returns:
             tuple: Contains the store info or an error code/message
         """
-        try:
-            return stores[store_id]
-        except KeyError:
-            abort(404, message="Store not found")
+        store = StoreModel.get_or_404(store_id)
+        return store
 
 
     def delete(self, store_id: str) -> tuple:
@@ -43,35 +41,10 @@ class Store(MethodView):
         Returns:
             tuple: Contains the response status code and response message
         """
-        try:
-            del stores[store_id]
-            return { "message": "Store deleted." }
-        except KeyError:
-            abort(404, message="Store not found.")
-
-
-    def put(self, store_id: str) -> tuple:
-        """ PUT request handler for the /store/store_id endpoint to update individual stores
-
-        Args:
-            store_id (str): The store id to use to update store data
-
-        Returns:
-            tuple: The updated store and a status code, or a message and a status code
-        """
-        store_data = request.get_json()
-
-        if "name" not in store_data:
-            abort(400, message="Bad request. Ensure 'name' is included in the JSON payload.")
-
-        try:
-            store = stores[store_id]
-            store |= store_data
-
-            return store
-        except KeyError:
-            abort(404, message="Store not found.")
-
+        store = StoreModel.query.get_or_404(store_id)
+        db.session.delete(store)
+        db.commit()
+        return {"message": "Store deleted."}
 
 @blp.route("/store")
 class StoreList(MethodView):
@@ -88,7 +61,7 @@ class StoreList(MethodView):
         Returns:
             dict: A dictionary containing a list of all stores
         """
-        return stores.values()
+        return StoreModel.query.all()
 
 
     @blp.arguments(StoreSchema)

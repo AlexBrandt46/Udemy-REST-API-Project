@@ -1,6 +1,10 @@
+""" Model file used to represent an item in the database """    
+
 from db import db
 
 class ItemModel(db.Model):
+    """ Model class used to represent an item in the database """    
+
     __tablename__ = "items"
 
     id = db.Column(db.Integer, primary_key=True)

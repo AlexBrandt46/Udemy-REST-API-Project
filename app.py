@@ -14,7 +14,15 @@ import models
 from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 
-def create_app(db_url=None):
+def create_app(db_url:str=None) -> Flask:
+    """_summary_
+
+    Args:
+        db_url (str, optional): The URL of the database to use. Defaults to None.
+
+    Returns:
+        Flask: A Flask application
+    """
     app = Flask(__name__)
 
     app.config["PROPAGATE_EXCEPTIONS"] = True
