@@ -4,3 +4,9 @@ resources/__pychache__
 __pycache__/db.cpython-310.pyc
 __pycache__/app.cpython-310.pyc
 .vscode/settings.json
+__pycache__/schemas.cpython-310.pyc
+models/__pycache__/__init__.cpython-310.pyc
+models/__pycache__/item.cpython-310.pyc
+models/__pycache__/store.cpython-310.pyc
+resources/__pycache__/item.cpython-310.pyc
+resources/__pycache__/store.cpython-310.pyc
