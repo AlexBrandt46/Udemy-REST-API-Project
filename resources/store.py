@@ -1,12 +1,12 @@
 """ File containing Blueprint and classes for handling /store HTTP requests """
 
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from schemas import StoreSchema
 from db import db
 from models import StoreModel
+from schemas import StoreSchema
+
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
@@ -43,7 +43,7 @@ class Store(MethodView):
         """
         store = StoreModel.query.get_or_404(store_id)
         db.session.delete(store)
-        db.commit()
+        db.session.commit()
         return {"message": "Store deleted."}
 
 @blp.route("/store")

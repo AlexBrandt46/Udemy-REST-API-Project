@@ -1,6 +1,5 @@
 """ File containing Blueprint and classes for handling /item HTTP requests """
 
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
@@ -49,17 +48,28 @@ class Item(MethodView):
 
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
-    def put(self, item_data, item_id: str) -> tuple:
+    def put(self, item_data: dict, item_id: str) -> tuple:
         """ Handles PUT request of /item endpoint
 
         Args:
             item_id (str): the item_id to update data of
+            item_data (dict): data to update the corresponding item with
 
         Returns:
             tuple: represents the HTTP response
         """
-        item = ItemModel.query.get_or_404(item_id)
-        raise NotImplementedError("Updating an item is not implemented.")
+        item = ItemModel.query.get(item_id)
+
+        if item:
+            item.price = item_data["price"]
+            item.name = item_data["name"]
+        else:
+            item = ItemModel(id=item_id, **item_data)
+
+        db.session.add(item)
+        db.session.commit()
+
+        return item
 
 
 @blp.route("/item")

@@ -4,8 +4,8 @@ File contains API requests for stores
 
 import os
 
-from flask import Flask, request
-from flask_smorest import abort, Api
+from flask import Flask
+from flask_smorest import Api
 # from flask_migrate import Migrate
 
 from db import db

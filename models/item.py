@@ -1,4 +1,4 @@
-""" Model file used to represent an item in the database """    
+""" Model file used to represent an item in the database """
 
 from db import db
 
