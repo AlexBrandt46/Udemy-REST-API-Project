@@ -12,7 +12,7 @@ class PlainItemSchema(Schema):
     # dump_only=True means we'll only use the id field when it's returned from the API, not sent
     # required=True means that this field should always be returned by the API
 
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     price = fields.Float(required=True)
 
@@ -34,8 +34,13 @@ class PlainStoreSchema(Schema):
     Args:
         Schema: PlainStoreSchema is a subclass of Schema
     """
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
+
+
+class PlainTagSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()
 
 
 class ItemSchema(PlainItemSchema):
@@ -47,6 +52,7 @@ class ItemSchema(PlainItemSchema):
     """
     store_id = fields.Int(required=True, load_only=True)
     store = fields.Nested(PlainStoreSchema(), dump_only=True)
+    tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
 
 
 class StoreSchema(PlainStoreSchema):
@@ -57,3 +63,16 @@ class StoreSchema(PlainStoreSchema):
         PlainStoreSchema: StoreSchema is a subclass of PlainStoreSchema
     """
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+    tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
+
+
+class TagSchema(PlainTagSchema):
+    store_id = fields.Int(load_only=True)
+    store = fields.Nested(PlainStoreSchema(), dump_only=True)
+    items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+    
+    
+class TagAndItemSchema(Schema):
+    message = fields.Str()
+    item = fields.Nested(ItemSchema)
+    tag = fields.Nested(TagSchema)

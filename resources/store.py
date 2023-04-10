@@ -28,7 +28,7 @@ class Store(MethodView):
         Returns:
             tuple: Contains the store info or an error code/message
         """
-        store = StoreModel.get_or_404(store_id)
+        store = StoreModel.query.get_or_404(store_id)
         return store
 
 
