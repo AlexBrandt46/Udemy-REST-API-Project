@@ -3,6 +3,7 @@ File contains API requests for stores
 """
 
 import os
+import secrets
 
 from flask import Flask
 from flask_smorest import Api
@@ -14,6 +15,7 @@ import models
 from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
+from flask_jwt_extended import JWTManager
 
 def create_app(db_url:str=None) -> Flask:
     """_summary_
@@ -39,6 +41,9 @@ def create_app(db_url:str=None) -> Flask:
     # migrate = Migrate(app, db)
 
     api = Api(app)
+    
+    app.config["JWT_SECRET_KEY"] = "236520528094713753437932268324630142015"
+    jwt = JWTManager(app)
 
     with app.app_context():
         db.create_all()
