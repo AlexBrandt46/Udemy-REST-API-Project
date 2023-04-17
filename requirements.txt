@@ -5,3 +5,4 @@ sqlalchemy
 flask-sqlalchemy
 flask-migrate
 flask-jwt-extended
+passlib

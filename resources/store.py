@@ -10,7 +10,7 @@ from schemas import StoreSchema
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
-@blp.route("/store/<string:store_id>")
+@blp.route("/store/<int:store_id>")
 class Store(MethodView):
     """Class used for handling the /Store requests
 
@@ -19,11 +19,11 @@ class Store(MethodView):
     """
 
     @blp.response(200, StoreSchema)
-    def get(self, store_id: str) -> tuple:
+    def get(self, store_id: int) -> tuple:
         """ GET request handler for the /store/store_id endpoint
 
         Args:
-            store_id (str): The store_id of the desired store
+            store_id (int): The store_id of the desired store
 
         Returns:
             tuple: Contains the store info or an error code/message
@@ -32,11 +32,11 @@ class Store(MethodView):
         return store
 
 
-    def delete(self, store_id: str) -> tuple:
+    def delete(self, store_id: int) -> tuple:
         """DELETE request handler for the /store/store_id endpoint
 
         Args:
-            store_id (str): The store_id of the store that needs deletion
+            store_id (int): The store_id of the store that needs deletion
 
         Returns:
             tuple: Contains the response status code and response message

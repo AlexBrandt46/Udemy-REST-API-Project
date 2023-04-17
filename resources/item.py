@@ -9,7 +9,7 @@ from schemas import ItemSchema, ItemUpdateSchema
 
 blp = Blueprint("Items", __name__, description="Operations on items")
 
-@blp.route("/item/<string:item_id>")
+@blp.route("/item/<int:item_id>")
 class Item(MethodView):
     """ Class used to handle HTTP requests for the /item/item_id endpoint
 
@@ -18,11 +18,11 @@ class Item(MethodView):
     """
 
     @blp.response(200, ItemSchema)
-    def get(self, item_id: str) -> tuple:
+    def get(self, item_id: int) -> tuple:
         """Performs GET request to retrieve a specific item
         
         Args:
-            item_id (str): The id of the item to retrieve data of
+            item_id (int): The id of the item to retrieve data of
         Returns:
             dict: Response message/data
             int: The status code of the response
@@ -31,12 +31,12 @@ class Item(MethodView):
         return item
 
 
-    def delete(self, item_id: str) -> tuple:
+    def delete(self, item_id: int) -> tuple:
         """
             Performs DELETE request to delete an item
             
             Args:
-                name (str): The name of the store to retrieve specific items from
+                name (int): The name of the store to retrieve specific items from
             Returns:
                 dict: Response message/data
                 int: The status code of the response
@@ -48,11 +48,11 @@ class Item(MethodView):
 
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
-    def put(self, item_data: dict, item_id: str) -> tuple:
+    def put(self, item_data: dict, item_id: int) -> tuple:
         """ Handles PUT request of /item endpoint
 
         Args:
-            item_id (str): the item_id to update data of
+            item_id (int): the item_id to update data of
             item_data (dict): data to update the corresponding item with
 
         Returns:
