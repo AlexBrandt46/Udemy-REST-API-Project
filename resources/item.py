@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from db import db
 from models import ItemModel
 from schemas import ItemSchema, ItemUpdateSchema
+from flask_jwt_extended import jwt_required
 
 blp = Blueprint("Items", __name__, description="Operations on items")
 
@@ -30,7 +31,7 @@ class Item(MethodView):
         item = ItemModel.query.get_or_404(item_id)
         return item
 
-
+    @jwt_required()
     def delete(self, item_id: int) -> tuple:
         """
             Performs DELETE request to delete an item
@@ -46,6 +47,7 @@ class Item(MethodView):
         db.session.commit()
         return {"message": "Item deleted."}
 
+    @jwt_required()
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data: dict, item_id: int) -> tuple:
@@ -79,6 +81,7 @@ class ItemList(MethodView):
     Args:
         MethodView (_type_): _description_
     """
+    @jwt_required()
     @blp.response(200, ItemSchema(many=True))
     def get(self) -> dict:
         """ Retrieves all items in the database
@@ -89,6 +92,7 @@ class ItemList(MethodView):
         return ItemModel.query.all()
 
 
+    @jwt_required()
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, item_data) -> tuple:
