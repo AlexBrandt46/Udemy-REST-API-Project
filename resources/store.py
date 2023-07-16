@@ -3,10 +3,11 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from flask_jwt_extended import jwt_required, get_jwt
+
 from db import db
 from models import StoreModel
 from schemas import StoreSchema
-
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
@@ -18,6 +19,7 @@ class Store(MethodView):
         MethodView: _description_
     """
 
+    # TODO: Add description to 200 response code annotation
     @blp.response(200, StoreSchema)
     def get(self, store_id: int) -> tuple:
         """ GET request handler for the /store/store_id endpoint
@@ -32,6 +34,7 @@ class Store(MethodView):
         return store
 
 
+    @jwt_required
     def delete(self, store_id: int) -> tuple:
         """DELETE request handler for the /store/store_id endpoint
 
@@ -41,6 +44,11 @@ class Store(MethodView):
         Returns:
             tuple: Contains the response status code and response message
         """
+
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privileges required.")
+
         store = StoreModel.query.get_or_404(store_id)
         db.session.delete(store)
         db.session.commit()
@@ -49,7 +57,7 @@ class Store(MethodView):
 @blp.route("/store")
 class StoreList(MethodView):
     """Class that handles the HTTP requests for the /store endpoint which handles all stores
-
+ import jwt_required, get_jwt
     Args:
         MethodView (_type_): _description_
     """
@@ -63,7 +71,8 @@ class StoreList(MethodView):
         """
         return StoreModel.query.all()
 
-
+    # TODO: Add description to 200 response code annotation
+    @jwt_required()
     @blp.arguments(StoreSchema)
     @blp.response(200, StoreSchema)
     def post(self, store_data):
@@ -73,6 +82,10 @@ class StoreList(MethodView):
             dict: The store that was created as part of this request
             int: The status code of the response
         """
+
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privilege required.")
 
         store = StoreModel(**store_data)
 
