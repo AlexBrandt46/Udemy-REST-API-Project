@@ -107,7 +107,7 @@ class ItemList(MethodView):
         return ItemModel.query.all()
 
     # TODO: Add description to 201 response code annotation
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, item_data) -> tuple:
