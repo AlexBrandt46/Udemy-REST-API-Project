@@ -11,6 +11,8 @@ blp = Blueprint("Tags", "tags", description="Operations on tags")
 
 @blp.route("/store/<int:store_id>/tag")
 class TagsInStore(MethodView):
+    """ Class that handles endpoints for the tags of specific stores """
+
     @blp.response(200, TagSchema(many=True))
     def get(self, store_id: int):
         store = StoreModel.query.get_or_404(store_id)
@@ -32,14 +34,15 @@ class TagsInStore(MethodView):
         try:
             db.session.add(tag)
             db.session.commit()
-        except SQLAlchemyError as e:
-            abort(500, message=str(e))
+        except SQLAlchemyError as error:
+            abort(500, message=str(error))
 
         return tag
 
 
 @blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
+    """ Class to handle endpoints for the tags related to an item """
 
     # TODO: Add description to the blp response 201 object
     @jwt_required()
@@ -86,6 +89,8 @@ class LinkTagsToItem(MethodView):
 
 @blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
+    """ Class to handle endpoints for creating actual tags """
+
     # TODO: Add description to 200 response code annotation
     @blp.response(200, TagSchema)
     def get(self, tag_id: int):

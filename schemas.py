@@ -56,7 +56,7 @@ class ItemSchema(PlainItemSchema):
 
 
 class StoreSchema(PlainStoreSchema):
-    """Store schema that's used to represent a store along with its relationship to items
+    """ Store schema that's used to represent a store along with its relationship to items
         A subclass is created, so there's not a recursive nesting relationship made between
         ItemSchema and StoreSchema since they'd become dependent on each other
     Args:
@@ -67,18 +67,20 @@ class StoreSchema(PlainStoreSchema):
 
 
 class TagSchema(PlainTagSchema):
+    """ Schema that represents tags in the DB """
     store_id = fields.Int(load_only=True)
     store = fields.Nested(PlainStoreSchema(), dump_only=True)
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
-    
-    
+
+
 class TagAndItemSchema(Schema):
     message = fields.Str()
     item = fields.Nested(ItemSchema)
     tag = fields.Nested(TagSchema)
-    
-    
+
+
 class UserSchema(Schema):
+    """ User schema that represents the users """
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)

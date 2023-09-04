@@ -43,13 +43,14 @@ def create_app(db_url:str=None) -> Flask:
     # migrate = Migrate(app, db)
 
     api = Api(app)
-    
+
     app.config["JWT_SECRET_KEY"] = "236520528094713753437932268324630142015"
     jwt = JWTManager(app)
-    
+
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        """Runs whenever we receive a JWT and checks if the token is in the blocklist, if it is, then the request is terminated and it is revoked
+        """ Runs whenever we receive a JWT and checks if the token is in the blocklist, 
+            if it is, then the request is terminated and it is revoked
 
         Args:
             jwt_header (_type_): _description_
@@ -59,10 +60,11 @@ def create_app(db_url:str=None) -> Flask:
             _type_: _description_
         """
         return jwt_payload["jti"] in BLOCKLIST
-    
+
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
-        """Event handler that returns an error to the user in the event that check_if_token_in_blocklist returns true
+        """Event handler that returns an error to the user in the event that 
+            check_if_token_in_blocklist returns true
 
         Args:
             jwt_header (_type_): _description_
@@ -73,16 +75,16 @@ def create_app(db_url:str=None) -> Flask:
                 {"description": "The token has been revoked.", "error": "token_revoked"}
             ), 401
         )
-    
+
     # Add a claim to a JWT
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
         # Purely for learning purposes, normally would check in database for a user's permissions
         if identity == 1:
             return { "is_admin": True }
-        
+
         return { "is_admin": False }
-    
+
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         return (
@@ -91,7 +93,7 @@ def create_app(db_url:str=None) -> Flask:
                 "error": "token_expired"
             }), 401
         )
-        
+
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
         return (
@@ -100,7 +102,7 @@ def create_app(db_url:str=None) -> Flask:
                 "error": "invalid_token"
             }), 401
         )
-        
+
     @jwt.unauthorized_loader
     def missing_token_callback(error):
         return (
